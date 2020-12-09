@@ -4,7 +4,7 @@ L'équipe de traduction de Wordpress en Français a décidé d'imposer de force 
 
 Je vous propose une correction de Wordpress 5.6 débarrassée de tout ce verbiage militant.
 
-== Installation ==
+Pour l'installer :
 1. télécharger "Wordpress-5.6-sans-epicene.zip"
 2. Rendez-vous dans votre dossier FTP de Wordpress "wp-content/languages".
 3. Remplacer les six fichiers .po et .mo par ceux présents dans le zip "Wordpress-5.6-sans-epicene.zip".
