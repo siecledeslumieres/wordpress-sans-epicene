@@ -11,9 +11,7 @@ Pour l'installer :
 - C'est fait !
 
 
-J'invite l'équipe de traduction de Wordpress à revenir sur sa décision et de proposer dans une prochaine version de Wordpress, un "français-courant" correct par défaut, et un "français épicène" pour les militants qui le veulent.
-
-
+Je vous invite à faire savoir votre désacord à l'équipe de traduction de Wordpress afin qu'elle revienne sur sa décision, et qu'il soit intégré dans une prochaine version, le choix entre un "français-courant" correct et un "français épicène" pour les militants qui le veulent.
 
 
 → À lire sur Le Monde : « L’écriture inclusive fait partie de ces dispositifs volontaristes, ostentatoires, qui ne servent pas les causes qu’ils prétendent défendre » 
