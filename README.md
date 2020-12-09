@@ -6,7 +6,7 @@ Je vous propose une correction de Wordpress 5.6 débarrassée de tout ce verbiag
 
 Pour l'installer :
 - télécharger "Wordpress-5.6-sans-epicene.zip"
-- Rendez-vous dans votre dossier FTP de Wordpress wp-content/languages.
+- Rendez-vous dans votre dossier FTP de Wordpress "wp-content/languages".
 - Remplacer les six fichiers .po et .mo par ceux présents dans le zip "Wordpress-5.6-sans-epicene.zip".
 - C'est fait !
 
