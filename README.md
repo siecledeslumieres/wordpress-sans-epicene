@@ -14,5 +14,4 @@ Pour l'installer :
 Par ailleurs, je vous invite à faire savoir votre désacord à l'équipe de traduction de Wordpress afin qu'elle revienne sur sa décision, et qu'il soit intégré dans une prochaine version, le choix entre un "français-courant" correct et un "français épicène" pour les militants qui le veulent.
 
 
-→ À lire sur Le Monde : « L’écriture inclusive fait partie de ces dispositifs volontaristes, ostentatoires, qui ne servent pas les causes qu’ils prétendent défendre » 
-https://www.lemonde.fr/idees/article/2019/05/29/daniele-manesse-le-masculin-de-la-langue-n-est-pas-le-masculin-du-monde-sensible_5468880_3232.html
+→ À lire : « Une “écriture excluante” qui “s’impose par la propagande” : 32 linguistes listent les défauts de l’écriture inclusive » http://inclusive.sciencedutexte.fr/
