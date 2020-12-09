@@ -12,5 +12,7 @@ Pour l'installer :
 
 J'invite l'équipe de traduction de Wordpress à revenir sur sa décision et de proposer dans une prochaine version de Wordpress, un "français-courant" correct par défaut, et un "français épicène" pour les militants qui le veulent.
 
-À lire sur Le Monde : « L’écriture inclusive fait partie de ces dispositifs volontaristes, ostentatoires, qui ne servent pas les causes qu’ils prétendent défendre » 
+
+
+→ À lire sur Le Monde : « L’écriture inclusive fait partie de ces dispositifs volontaristes, ostentatoires, qui ne servent pas les causes qu’ils prétendent défendre » 
 https://www.lemonde.fr/idees/article/2019/05/29/daniele-manesse-le-masculin-de-la-langue-n-est-pas-le-masculin-du-monde-sensible_5468880_3232.html
