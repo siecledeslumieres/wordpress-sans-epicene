@@ -1,6 +1,6 @@
 # Wordpress 5.6 débarrassé du langage épicène
 
-L'équipe de traduction de Wordpress en Français a décidé d'imposer de force  à toute la communauté francophone de Wordpress leur langage militant épicène, aussi appelé "langage inclusif", à partir de la version 5.6 de Wordpress, et cela sans même proposer la moindre alternative. Nous ne parlons manifestement plus la même langue.
+L'équipe de traduction de Wordpress en Français a décidé d'imposer de force  à toute la communauté francophone leur langage militant épicène, aussi appelé "langage inclusif", à partir de la version 5.6 de Wordpress, et sans laisser la moindre alternative. Nous ne parlons manifestement plus la même langue.
 
 Je vous propose une correction de Wordpress 5.6 débarrassée de tout ce verbiage militant.
 
