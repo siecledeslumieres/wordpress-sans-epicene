@@ -10,7 +10,9 @@ Pour l'installer :
 - Remplacer les six fichiers .po et .mo par ceux présents dans le zip "Wordpress-5.6-sans-epicene.zip".
 - C'est fait !
 
+
 J'invite l'équipe de traduction de Wordpress à revenir sur sa décision et de proposer dans une prochaine version de Wordpress, un "français-courant" correct par défaut, et un "français épicène" pour les militants qui le veulent.
+
 
 
 
