@@ -15,3 +15,4 @@ Par ailleurs, je vous invite à faire savoir votre désacord à l'équipe de tra
 
 
 → À lire : « Une “écriture excluante” qui “s’impose par la propagande” : 32 linguistes listent les défauts de l’écriture inclusive » http://inclusive.sciencedutexte.fr/
+→ Les dérives du néo-féminisme : http://eromakia.fr/index.php/critique-du-neo-feminisme/
