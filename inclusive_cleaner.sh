@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cleaner () {
+    # Remplace toutes les occurences dans le fichier cible
     sed --in-place --regexp-extended "s@$1@$2@g" "$3"
 }
 
@@ -9,6 +10,10 @@ files_list=("admin-fr_FR.mo" "admin-fr_FR.po" "admin-network-fr_FR.mo" "admin-ne
 for file in "${files_list[@]}"
 do
 echo "> Working on file $file"
+
+    # Sauvegarde le fichier original, par sécurité et pour le diff
+    cp -a "$file" "$file.backup"
+
     # auteur/autrice
     cleaner "/autrices?" "" "$file"
     # auteurs ou autrices
@@ -94,4 +99,7 @@ echo "> Working on file $file"
     # prêt·e
     # petit·e ami·e
     cleaner "·e" "" "$file"
+
+    # Créer un diff du fichier modifié par rapport à la version originale
+    git --no-pager diff --unified=0 --word-diff=color --no-index "$file.backup" "$file"
 done
