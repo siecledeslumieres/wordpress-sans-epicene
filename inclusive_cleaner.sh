@@ -3,9 +3,28 @@
 # Get the path of this script
 script_dir="$(dirname "$(realpath "$0")")"
 
+# Define the working mode of the script
+#  --standalone
+#    Modify all translation files directly into their directory.
+#    Can be used in a cron task to automatically fix the translations
+#  --plugin_feeder
+#    Do not modify the translations. Build only mo and po files for the plugin wordpress-sans-epicene
+mode=$1
+
+if [ -z "$mode" ] || [ "$mode" != "--standalone" ] && [ "$mode" != "--plugin_feeder" ]
+then
+    echo "Please choose a mode between --standalone and --plugin_feeder for the script."
+    echo "The mode has to be set as an argument for the script."
+    exit 1
+fi
+
 # languages_dir=/var/www/wordpress/wp-content/languages
 languages_dir="$script_dir/Original"
 dest_dir="$script_dir/modified_translations"
+witness_dir="$script_dir/witnesses"
+
+mkdir -p "$dest_dir"
+mkdir -p "$witness_dir"
 
 # List of string to fix
 # The format is as following:
@@ -123,6 +142,40 @@ seek_and_destroy () {
 }
 
 
+# Build the list of file to modify
+if [ "$mode" == "--standalone" ]
+then
+    # In standalone mode, work on all po and mo translation files.
+    IFS_backup=$IFS; IFS=$'\n'
+    files_list=( $(find "$languages_dir" -print | grep ".po$\|.mo$") )
+    IFS=$IFS_backup
+else
+    files_list=("$languages_dir/admin-fr_FR.po" "$languages_dir/admin-network-fr_FR.po" "$languages_dir/fr_FR.po")
+fi
+
+# Check if there's anything new in the translation files
+
+# Make a checksum of each file in the list, then a checksum of all these cheksums.
+# That give us a checksum for all the files at once
+current_checksum=$(find "${files_list[@]}" -exec md5sum {} \; | md5sum | cut -d' ' -f1)
+if [ "$mode" == "--standalone" ]
+then
+    checksum_file="$script_dir/checksum_standalone"
+else
+    checksum_file="$script_dir/checksum_plugin_feeder"
+fi
+last_checksum=$(cat "$checksum_file" 2> /dev/null )
+
+if [ "$current_checksum" == "$last_checksum" ]
+then
+    # Nothing to do, the checksum is the same.
+    # No new files to process
+    exit 0
+fi
+
+# Store the new checksum for the next execution.
+echo "$current_checksum" > "$checksum_file"
+
 
 # Compile the cleaning strings for better performances
 # Remove comments
@@ -155,76 +208,87 @@ quick_search="${quick_search%|}"
 
 > diff_result
 
-files_list=("$languages_dir/admin-fr_FR" "$languages_dir/admin-network-fr_FR" "$languages_dir/fr_FR")
-
 # Read each file to clean them
 for file in "${files_list[@]}"
 do
 
-    echo "Working on file $file.po..."
+    # standalone mode
+    if [ "$mode" == "--standalone" ]
+    then
+        echo "Working on file $file..."
 
-    final_translation_file="$dest_dir/$(basename "$file").po"
-    witness_file="$script_dir/$(basename "$file").po.wit"
+        final_translation_file="$file"
+        witness_file="$witness_dir/$(basename "$file").wit"
 
-    > "$final_translation_file"
-    > "$witness_file"
+        cp "$final_translation_file" "$witness_file"
 
-    translation_string=0
-    # Read each line of the file
-    while read -r line
-    do
-        # Purge variable before starting a new translation string
-        #   And write down strings
-        # A blank line indicate the end of a translation string
-        if [ -z "$line" ]
-        then
-            if [ -n "$msgstr" ]
+    # plugin_feeder mode
+    else
+        echo "Working on file $file..."
+
+        final_translation_file="$dest_dir/$(basename "$file")"
+        witness_file="$witness_dir/$(basename "$file").wit"
+
+        > "$final_translation_file"
+        > "$witness_file"
+
+        translation_string=0
+        # Read each line of the file
+        while read -r line
+        do
+            # Purge variable before starting a new translation string
+            #   And write down strings
+            # A blank line indicate the end of a translation string
+            if [ -z "$line" ]
             then
-                echo "$msgid" >> "$final_translation_file"
-                echo "$msgstr" >> "$final_translation_file"
-                echo "" >> "$final_translation_file"
+                if [ -n "$msgstr" ]
+                then
+                    echo "$msgid" >> "$final_translation_file"
+                    echo "$msgstr" >> "$final_translation_file"
+                    echo "" >> "$final_translation_file"
 
-                # Duplicate in a witness file for a final diff
-                echo "$msgid" >> "$witness_file"
-                echo "$original_msgstr" >> "$witness_file"
-                echo "" >> "$witness_file"
+                    # Duplicate in a witness file for a final diff
+                    echo "$msgid" >> "$witness_file"
+                    echo "$original_msgstr" >> "$witness_file"
+                    echo "" >> "$witness_file"
+                fi
+                msgid=""
+                msgstr=""
+                original_msgstr=""
             fi
-            msgid=""
-            msgstr=""
-            original_msgstr=""
-        fi
 
-        # Look for msgctxt or msgid as beginning of a translation string.
-        if echo "$line" | grep --quiet --extended-regexp "^msgctxt|^msgid"
-        then
-            # If there's already a line stored in the variable, add a new line
-            if [ -n "$msgid" ]; then
-                msgid+="
-"
-            fi
-            # Store the msgid and msgctxt.
-            msgid+="$line"
-        fi
-
-        if echo "$line" | grep --quiet --extended-regexp "^msgstr"
-        then
-            # Check the line to remove inclusive writings
-            cleaned_line="$(seek_and_destroy "$line")"
-            if [ -n "$cleaned_line" ]
+            # Look for msgctxt or msgid as beginning of a translation string.
+            if echo "$line" | grep --quiet --extended-regexp "^msgctxt|^msgid"
             then
                 # If there's already a line stored in the variable, add a new line
-                if [ -n "$msgstr" ]; then
-                    msgstr+="
-"
-                    original_msgstr+="
+                if [ -n "$msgid" ]; then
+                    msgid+="
 "
                 fi
-                msgstr+="$cleaned_line"
-                original_msgstr+="$line"
-                echo -n "."
+                # Store the msgid and msgctxt.
+                msgid+="$line"
             fi
-        fi
-    done < "$file.po"
+
+            if echo "$line" | grep --quiet --extended-regexp "^msgstr"
+            then
+                # Check the line to remove inclusive writings
+                cleaned_line="$(seek_and_destroy "$line")"
+                if [ -n "$cleaned_line" ]
+                then
+                    # If there's already a line stored in the variable, add a new line
+                    if [ -n "$msgstr" ]; then
+                        msgstr+="
+"
+                        original_msgstr+="
+"
+                    fi
+                    msgstr+="$cleaned_line"
+                    original_msgstr+="$line"
+                    echo -n "."
+                fi
+            fi
+        done < "$file"
+    fi
 
     # Clean again the whole file to remove other inclusive writings on string already cleaned.
     for i in $(seq 0 $(( ${#cleaning_array_seek[@]} - 1)) )
@@ -232,14 +296,17 @@ do
         sed --in-place --regexp-extended "s@${cleaning_array_seek[$i]}@${cleaning_array_destroy[$i]}@g" "$final_translation_file"
     done
 
-    echo " File $file.po is done."
+    echo " File $file is done."
 
     # Créer un diff du fichier modifié par rapport à la version originale
     git --no-pager diff --unified=0 --word-diff=color --no-index "$witness_file" "$final_translation_file" >> diff_result
 
-    # Compile the .mo file from the .po
-    compiled_mo_file="$(dirname "$final_translation_file")/$(basename --suffix=.po "$final_translation_file").mo"
-    msgfmt --output-file="$compiled_mo_file" "$final_translation_file"
+    if [ "$mode" == "--plugin_feeder" ]
+    then
+        # Compile the .mo file from the .po
+        compiled_mo_file="$(dirname "$final_translation_file")/$(basename --suffix=.po "$final_translation_file").mo"
+        msgfmt --output-file="$compiled_mo_file" "$final_translation_file"
+    fi
 done
 
 # Print the diff to check the modifications made by the script
