@@ -22,6 +22,9 @@ fi
 languages_dir="$script_dir/Original"
 dest_dir="$script_dir/modified_translations"
 witness_dir="$script_dir/witnesses"
+git_repo=https://github.com/Zeldemir/wordpress-sans-epicene
+# Mail recipient. root should be enough if you read the mails for this server
+recipient=root
 
 mkdir -p "$dest_dir"
 mkdir -p "$witness_dir"
@@ -168,7 +171,7 @@ last_checksum=$(cat "$checksum_file" 2> /dev/null )
 
 if [ "$current_checksum" == "$last_checksum" ]
 then
-    # Nothing to do, the checksum is the same.
+    echo "Nothing to do, the checksum is the same."
     # No new files to process
     exit 0
 fi
@@ -311,3 +314,70 @@ done
 
 # Print the diff to check the modifications made by the script
 cat diff_result
+
+# Make a commit on the repo to update the plugin
+if [ "$mode" == "--plugin_feeder" ]
+then
+
+    if [ ! -e "$script_dir/ssh_key" ]
+    then
+        ssh-keygen -t rsa -f "$script_dir/ssh_key" -P ''
+        echo -e "\nIn order for the script to work automatically,"
+        echo "please add the public key to the 'Deploy keys'"
+        echo "into the Settings of the repository."
+        echo "Public key to add:"
+        cat "$script_dir/ssh_key.pub"
+        rm -f "$script_dir/checksum_plugin_feeder"
+        exit 0
+    fi
+
+    # Clone the distant repository
+    if [ ! -e "$script_dir/git_repository" ]
+    then
+        git clone $git_repo "$script_dir/git_repository"
+
+        (
+            cd "$script_dir/git_repository"
+            # Move from the http address to a ssh address
+            git remote set-url origin ${git_repo/https:\/\/github.com\//git@github.com:}.git
+        )
+    fi
+
+    pushd "$script_dir/git_repository"
+
+    # Configure git to use ssh
+    git config core.sshCommand "ssh -i \"$script_dir/ssh_key\" -F /dev/null"
+    # Delete the working branch
+    git checkout main
+    git branch -D translation_update
+    git push origin --delete translation_update
+
+    # Update the repo
+    git pull
+
+    # Recreate a branch from main
+    git checkout -b translation_update
+
+    # Update the files in the working branch
+    while read file
+    do
+        cp "$file" "$script_dir/git_repository"
+    done <<< "$(find "$dest_dir" -print)"
+
+    # Feed the mail
+    echo -e "Bonjour\n" > "$script_dir/mail_content"
+    echo "De nouvelles traductions sont disponibles pour l'extension wordpress-sans-epicene." >> "$script_dir/mail_content"
+    echo "Un commit devrait avoir été fait sur le dépôt $git_repo sur la branche translation_update" >> "$script_dir/mail_content"
+    echo -e "\nCe commit contient les modifications suivantes:" >> "$script_dir/mail_content"
+
+    # Commit the changes
+    git add --all
+    git status -v >> "$script_dir/mail_content"
+    git commit -m "Update translations"
+    git push -u origin translation_update
+
+    popd
+
+    # Send un mail to inform that a new commit is done.
+    mail -s "[Wordpress sans épicène] Nouvelles traductions à ajouter à l'extension" "$recipient" < "$script_dir/mail_content"
+fi
