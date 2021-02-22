@@ -150,7 +150,7 @@ if [ "$mode" == "--standalone" ]
 then
     # In standalone mode, work on all po and mo translation files.
     IFS_backup=$IFS; IFS=$'\n'
-    files_list=( $(find "$languages_dir" -print | grep ".po$\|.mo$") )
+    files_list=( $(find "$languages_dir" -print | grep ".po$") )
     IFS=$IFS_backup
 else
     files_list=("$languages_dir/admin-fr_FR.po" "$languages_dir/admin-network-fr_FR.po" "$languages_dir/fr_FR.po")
@@ -304,12 +304,9 @@ do
     # Créer un diff du fichier modifié par rapport à la version originale
     git --no-pager diff --unified=0 --word-diff=color --no-index "$witness_file" "$final_translation_file" >> diff_result
 
-    if [ "$mode" == "--plugin_feeder" ]
-    then
-        # Compile the .mo file from the .po
-        compiled_mo_file="$(dirname "$final_translation_file")/$(basename --suffix=.po "$final_translation_file").mo"
-        msgfmt --output-file="$compiled_mo_file" "$final_translation_file"
-    fi
+    # Compile the .mo file from the .po
+    compiled_mo_file="$(dirname "$final_translation_file")/$(basename --suffix=.po "$final_translation_file").mo"
+    msgfmt --output-file="$compiled_mo_file" "$final_translation_file"
 done
 
 # Print the diff to check the modifications made by the script
