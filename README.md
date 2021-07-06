@@ -10,7 +10,7 @@ Pour l'installer :
 3. Remplacer les six fichiers .po et .mo par ceux présents dans le zip "Wordpress-5.6-sans-epicene.zip".
 4. C'est fait !
 
-[Édit 6 juillet 2021 : une autre astuce pour retrouver Wordpress débarrassé du langage épicène consiste à passer la langue de votre site en "Français du Canada". L'équipe de traduction canadienne n'ayant pas à l'heure actuelle fait le choix du langage épicène. Pour cela, rendez-vous dans l'espace administrateur de votre Wordpress, rubrique "Réglages" puis "Général". Dans le menu déroulant "Langue du site", sélectionner "Français du Canada", puis enregistrer les modifications.]
+[Édit 6 juillet 2021 : une autre astuce pour retrouver Wordpress débarrassé du langage épicène consiste à passer la langue de votre site en "Français du Canada". L'équipe de traduction canadienne n'ayant à l'heure actuelle pas fait le choix du langage épicène. Pour cela, rendez-vous dans l'espace administrateur de votre Wordpress, rubrique "Réglages" puis "Général". Dans le menu déroulant "Langue du site", sélectionner "Français du Canada", puis enregistrer les modifications.]
 
 Par ailleurs, je vous invite à manifester votre désaccord à l'équipe de traduction de Wordpress afin qu'elle revienne sur sa décision, et qu'il soit intégré par défaut dans une prochaine version, le choix entre un "français-courant" correct et un "français épicène" pour les militants convaincus.
 
